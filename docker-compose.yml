@@ -1,0 +1,12 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=agregador'
+      - 'MYSQL_PASSWORD=penha269'
+      - 'MYSQL_ROOT_PASSWORD=penha269'
+      - 'MYSQL_USER=paulo'
+    ports:
+      - '3306:3306'
+    expose:
+      - "3306"
