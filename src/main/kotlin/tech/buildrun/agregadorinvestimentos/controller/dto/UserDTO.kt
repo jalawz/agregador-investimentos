@@ -24,7 +24,8 @@ data class UserCreateRequest(
         email,
         password,
         creationTimestamp = Instant.now(),
-        updateTimestamp = Instant.now()
+        updateTimestamp = Instant.now(),
+        accounts = emptyList()
     )
 }
 

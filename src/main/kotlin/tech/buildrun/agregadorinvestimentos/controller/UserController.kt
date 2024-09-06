@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import tech.buildrun.agregadorinvestimentos.controller.dto.CreateAccountDTO
 import tech.buildrun.agregadorinvestimentos.controller.dto.UserCreateRequest
 import tech.buildrun.agregadorinvestimentos.controller.dto.UserResponse
 import tech.buildrun.agregadorinvestimentos.controller.dto.UserUpdateRequest
@@ -58,5 +59,16 @@ class UserController(
     fun deleteUserById(@PathVariable userId: String): ResponseEntity.HeadersBuilder<*> {
         userService.deleteUserById(userId)
         return ResponseEntity.noContent()
+    }
+
+    @PostMapping("/{userId}/accounts")
+    fun createUserAccount(@PathVariable userId: String, @RequestBody request: CreateAccountDTO): ResponseEntity<Unit> {
+        userService.createAccount(userId, request)
+        return ResponseEntity.ok().build()
+    }
+
+    @GetMapping("/{userId}/accounts")
+    fun getUserAccount(@PathVariable userId: String): ResponseEntity<Unit> {
+        return ResponseEntity.ok().build()
     }
 }

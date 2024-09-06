@@ -1,5 +1,6 @@
 package tech.buildrun.agregadorinvestimentos.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -22,7 +23,7 @@ data class BillingAddress(
     @Column(name = "number")
     val number: Int,
 
-    @OneToOne
+    @OneToOne(cascade = [CascadeType.ALL])
     @MapsId
     @JoinColumn(name = "account_id")
     val account: Account
