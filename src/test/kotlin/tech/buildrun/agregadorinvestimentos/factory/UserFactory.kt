@@ -6,12 +6,18 @@ import java.util.UUID
 
 object UserFactory {
 
-    fun userMock() = User(
-        UUID.randomUUID(),
-        "jalawz",
-        "jalawz@gmaill.com",
-        "password",
+    fun userMock(
+        userId: UUID = UUID.randomUUID(),
+        username: String = "jalawz",
+        email: String = "jalawz@gmail.com",
+        password: String = "password"
+    ) = User(
+        userId,
+        username,
+        email,
+        password,
         Instant.now(),
-        Instant.now()
+        Instant.now(),
+        emptyList()
     )
 }

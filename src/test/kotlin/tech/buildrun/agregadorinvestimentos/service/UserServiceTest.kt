@@ -1,22 +1,21 @@
 package tech.buildrun.agregadorinvestimentos.service
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import io.mockk.*
+import org.junit.jupiter.api.*
 import org.springframework.boot.test.context.SpringBootTest
 import tech.buildrun.agregadorinvestimentos.controller.dto.UserCreateRequest
 import tech.buildrun.agregadorinvestimentos.controller.dto.UserUpdateRequest
+import tech.buildrun.agregadorinvestimentos.entity.Account
+import tech.buildrun.agregadorinvestimentos.entity.BillingAddress
 import tech.buildrun.agregadorinvestimentos.entity.User
 import tech.buildrun.agregadorinvestimentos.exception.ResourceNotFoundException
+import tech.buildrun.agregadorinvestimentos.factory.AccountFactory
 import tech.buildrun.agregadorinvestimentos.factory.UserFactory
+import tech.buildrun.agregadorinvestimentos.repository.AccountRepository
+import tech.buildrun.agregadorinvestimentos.repository.BillingAddressRepository
 import tech.buildrun.agregadorinvestimentos.repository.UserRepository
 import java.time.Instant
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -26,7 +25,9 @@ import kotlin.test.assertTrue
 class UserServiceTest {
 
     private val userRepository = mockk<UserRepository>()
-    private val userService = UserService(userRepository)
+    private val accountRepository = mockk<AccountRepository>()
+    private val billingAddressRepository = mockk<BillingAddressRepository>()
+    private val userService = UserService(userRepository, accountRepository, billingAddressRepository)
 
     @Nested
     inner class CreateUser {
@@ -42,7 +43,8 @@ class UserServiceTest {
                 "jalawz@gmaill.com",
                 "password",
                 Instant.now(),
-                Instant.now()
+                Instant.now(),
+                emptyList()
             )
 
             val input = UserCreateRequest(
@@ -92,7 +94,8 @@ class UserServiceTest {
                 "jalawz@gmaill.com",
                 "password",
                 Instant.now(),
-                Instant.now()
+                Instant.now(),
+                emptyList()
             )
             every { userRepository.findById(capture(slot)) } returns Optional.of(user)
 
@@ -129,7 +132,8 @@ class UserServiceTest {
                 "jalawz@gmaill.com",
                 "password",
                 Instant.now(),
-                Instant.now()
+                Instant.now(),
+                emptyList()
             )
             every { userRepository.findAll() } returns listOf(user)
             // Act
@@ -202,6 +206,38 @@ class UserServiceTest {
                 assertEquals(userIdSlot.captured, USER_NOT_FOUND_ID)
             }
 
+        }
+    }
+
+    @Nested
+    inner class CreateAccount {
+
+        @Test
+        fun shouldCreateUserAccount() {
+            val accountDtoMock = AccountFactory.createAccountMock()
+
+            val idSlot = slot<UUID>()
+            every { userRepository.findById(capture(idSlot)) } returns Optional.of(UserFactory.userMock(
+                userId = USER_ID
+            ))
+
+            val slotAccount = slot<Account>()
+            every { accountRepository.save(capture(slotAccount)) } returns AccountFactory.accountMock()
+
+            val slotBillingAddress = slot<BillingAddress>()
+            every { billingAddressRepository.save(capture(slotBillingAddress)) } returns BillingAddress(
+                id = USER_ID,
+                street = accountDtoMock.street,
+                number = accountDtoMock.number,
+                account = AccountFactory.accountMock()
+            )
+
+            assertDoesNotThrow {
+                userService.createAccount(USER_ID.toString(), accountDtoMock)
+            }
+
+            assertEquals(USER_ID, idSlot.captured)
+            assertEquals(slotAccount.captured.user.userId, USER_ID)
         }
     }
 
