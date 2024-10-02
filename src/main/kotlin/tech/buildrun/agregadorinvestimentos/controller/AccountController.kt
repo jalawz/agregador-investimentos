@@ -27,7 +27,6 @@ class AccountController(
         @PathVariable("accountId") accountId: String
     ): ResponseEntity<List<AccountStockResponse>> {
         val stocksResponse = accountService.listAccountStocks(accountId)
-            .map { it.toResponse() }
         return ResponseEntity.ok(stocksResponse)
     }
 }

@@ -29,9 +29,10 @@ data class AccountStock(
     @JoinColumn(name = "stock_id")
     val stock: Stock,
 ) {
-    fun toResponse() = AccountStockResponse(
+    fun toResponse(total: Double = 0.0) = AccountStockResponse(
         stockId = id.stockId,
-        quantity = quantity
+        quantity = quantity,
+        total = total
     )
 }
 
