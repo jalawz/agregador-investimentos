@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
 import jakarta.persistence.Table
+import tech.buildrun.agregadorinvestimentos.controller.dto.AccountStockResponse
 import java.util.UUID
 
 @Entity
@@ -27,7 +28,12 @@ data class AccountStock(
     @MapsId("stockId")
     @JoinColumn(name = "stock_id")
     val stock: Stock,
-)
+) {
+    fun toResponse() = AccountStockResponse(
+        stockId = id.stockId,
+        quantity = quantity
+    )
+}
 
 @Embeddable
 data class AccountStockId(
