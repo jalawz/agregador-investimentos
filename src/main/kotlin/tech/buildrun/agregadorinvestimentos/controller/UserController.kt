@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import tech.buildrun.agregadorinvestimentos.controller.dto.CreateAccountDTO
-import tech.buildrun.agregadorinvestimentos.controller.dto.UserCreateRequest
-import tech.buildrun.agregadorinvestimentos.controller.dto.UserResponse
-import tech.buildrun.agregadorinvestimentos.controller.dto.UserUpdateRequest
+import tech.buildrun.agregadorinvestimentos.controller.dto.*
 import tech.buildrun.agregadorinvestimentos.entity.User
 import tech.buildrun.agregadorinvestimentos.service.UserService
 import java.net.URI
@@ -68,7 +65,11 @@ class UserController(
     }
 
     @GetMapping("/{userId}/accounts")
-    fun getUserAccount(@PathVariable userId: String): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
+    fun getUserAccount(@PathVariable userId: String): ResponseEntity<List<AccountResponseDTO>> {
+        val accounts = userService.listAccounts(userId)
+            .map {
+                AccountResponseDTO(it.accountId.toString(), it.description)
+            }
+        return ResponseEntity.ok(accounts)
     }
 }

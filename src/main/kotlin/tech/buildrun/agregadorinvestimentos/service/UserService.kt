@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import tech.buildrun.agregadorinvestimentos.controller.dto.CreateAccountDTO
 import tech.buildrun.agregadorinvestimentos.controller.dto.UserCreateRequest
 import tech.buildrun.agregadorinvestimentos.controller.dto.UserUpdateRequest
+import tech.buildrun.agregadorinvestimentos.entity.Account
 import tech.buildrun.agregadorinvestimentos.entity.BillingAddress
 import tech.buildrun.agregadorinvestimentos.entity.User
 import tech.buildrun.agregadorinvestimentos.exception.ResourceNotFoundException
@@ -64,8 +65,7 @@ class UserService(
     }
 
     fun createAccount(userId: String, request: CreateAccountDTO) {
-        val user = userRepository.findById(UUID.fromString(userId))
-            .orElseThrow { ResourceNotFoundException("User with id: $userId not found") }
+        val user = findUserById(userId)
 
         val accountCreated = accountRepository.save(request.toDomain(user))
         val billingAddress = BillingAddress(
@@ -77,4 +77,15 @@ class UserService(
 
         billingAddressRepository.save(billingAddress)
     }
+
+
+    fun listAccounts(userId: String): List<Account> {
+        val user = findUserById(userId)
+
+        return user.accounts
+    }
+
+    private fun findUserById(userId: String): User =
+        userRepository.findById(UUID.fromString(userId))
+            .orElseThrow { ResourceNotFoundException("User with id: $userId not found") }
 }

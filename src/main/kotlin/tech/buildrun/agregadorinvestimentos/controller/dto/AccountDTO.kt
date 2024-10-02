@@ -17,3 +17,8 @@ data class CreateAccountDTO(
         accountStocks = emptyList()
     )
 }
+
+data class AccountResponseDTO(
+    val accountId: String,
+    val description: String
+)
